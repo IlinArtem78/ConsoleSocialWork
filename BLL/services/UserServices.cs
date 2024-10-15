@@ -88,8 +88,7 @@ namespace ConsoleSocialWork.BLL.services
             //поиск по всем пользователям по id которое удовлетворяет условию: 
            return friendRepository.FindAllByUserId(id).Select(m =>
             {
-                var GetUserId = userRepository.FindById(m.friend_id);
-      
+                return ConstructUserModel(userRepository.FindById(m.friend_id));
             });
           
         }
