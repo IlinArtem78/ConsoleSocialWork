@@ -18,6 +18,7 @@ namespace ConsoleSocialWork.BLL.Models
         public string FavoriteBook { get; set; }
         public IEnumerable<Messages> IncomingMessages { get; }
         public IEnumerable<Messages> OutgoingMessages { get; }
+        public IEnumerable<Friends> friends { get; }
 
         public User(
             int id,

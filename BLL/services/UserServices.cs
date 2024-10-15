@@ -19,7 +19,7 @@ namespace ConsoleSocialWork.BLL.services
         public UserServices() 
         { 
             userRepository = new UserRepository();
-           
+            messageServices = new MessageServices();
         }
         public void Register(UserRegistrationData userRegistrationData)
         {
