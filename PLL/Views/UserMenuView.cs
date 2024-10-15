@@ -48,7 +48,11 @@ namespace ConsoleSocialWork.PLL.Views
                             Program.userDataUpdateView.Show(user);
                             break;
                         }
-
+                    case "3":
+                        {
+                            Program.AddFriendsView.Show(user);
+                            break;
+                        }
                     case "4":
                         {
                             Program.messageSendingView.Show(user);
