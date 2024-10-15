@@ -1,6 +1,7 @@
 ﻿using ConsoleSocialWork.BLL.Exceptions;
 using ConsoleSocialWork.BLL.Models;
 using ConsoleSocialWork.DAL.Entities;
+using ConsoleSocialWork.DAL.Intefeces;
 using ConsoleSocialWork.DAL.Repositories;
 using System;
 using System.Collections.Generic;
@@ -16,18 +17,20 @@ namespace ConsoleSocialWork.BLL.services
     {
         IUserRepository userRepository;
         MessageServices messageServices;
-        public UserServices() 
-        { 
+        IFriendRepository friendRepository;
+        public UserServices()
+        {
             userRepository = new UserRepository();
             messageServices = new MessageServices();
+            friendRepository = new FriendRepository();  
         }
         public void Register(UserRegistrationData userRegistrationData)
         {
             //исключения
-            if (string.IsNullOrEmpty(userRegistrationData.FirstName)) throw new ArgumentNullException(); 
+            if (string.IsNullOrEmpty(userRegistrationData.FirstName)) throw new ArgumentNullException();
             if (string.IsNullOrEmpty(userRegistrationData.LastName)) throw new ArgumentNullException();
-            if (string.IsNullOrEmpty(userRegistrationData.password) || (userRegistrationData.password.Length < 8))  throw new ArgumentNullException();
-            if (!new EmailAddressAttribute().IsValid(userRegistrationData.Email) || string.IsNullOrEmpty(userRegistrationData.Email)) throw new ArgumentNullException();  
+            if (string.IsNullOrEmpty(userRegistrationData.password) || (userRegistrationData.password.Length < 8)) throw new ArgumentNullException();
+            if (!new EmailAddressAttribute().IsValid(userRegistrationData.Email) || string.IsNullOrEmpty(userRegistrationData.Email)) throw new ArgumentNullException();
             if (userRepository.FindByEmail(userRegistrationData.Email) != null)
             {
                 throw new ArgumentNullException();
@@ -41,9 +44,9 @@ namespace ConsoleSocialWork.BLL.services
                 password = userRegistrationData.password
             };
 
-           if (this.userRepository.Create(userUnity) == 0)
+            if (this.userRepository.Create(userUnity) == 0)
             {
-                throw new Exception(); 
+                throw new Exception();
             }
         }
         public User Authenticate(UserAuthenticationData userAuthenticationData)
@@ -72,6 +75,42 @@ namespace ConsoleSocialWork.BLL.services
             return ConstructUserModel(findUserEntity);
         }
 
+        /*
+         Вашей же задачей становится добавление логики на уровень PLL и BLL. Процесс добавления пользователя в друзья должен быть следующим:
+        1. Пользователь вводит почтовый адрес друга.
+        2. Если почтовый адрес существует, то выполняем добавление.
+        3. Если почтового адреса не существует, то выбрасываем исключение UserNotFoundException.
+        На уровне PLL по аналогии с другими классами View создайте новую View, в которую поместите основную логику представления для добавления в друзья.
+         * 
+         * 
+         */
+        public IEnumerable<User> GetFriendById(int id)
+        {
+            //поиск по всем пользователям по id которое удовлетворяет условию: 
+           return friendRepository.FindAllByUserId(id).Select(m =>
+            {
+                var GetUserId = userRepository.FindById(m.friend_id);
+      
+            });
+          
+        }
+        
+        public void AddFriend(UserAddFriend userAddFriend)
+        {
+            //если почтовый адрес существует, то выполняем добавление.
+            var findUserFriend = userRepository.FindByEmail(userAddFriend.email);   
+            if (findUserFriend is null) throw new UserNotFoundException();  
+
+            var friendEntity = new FriendEntity()
+            {
+               user_id = userAddFriend.Id,
+               friend_id = findUserFriend.id
+            };
+
+            if (this.friendRepository.Create(friendEntity) == 0)
+                throw new Exception();
+        }
+
         public void Update(User user)
         {
             var updatableUserEntity = new UserEntity()
@@ -95,6 +134,7 @@ namespace ConsoleSocialWork.BLL.services
         {
             var incomingMessages = messageServices.GetIncomingMessagesByUserId(userEntity.id);
             var outgoingMessages = messageServices.GetOutcomingMessagesByUserId(userEntity.id);
+            var friendRepository = GetFriendById(userEntity.id);  
 
             return new User(userEntity.id,
                           userEntity.firstname,
@@ -105,7 +145,8 @@ namespace ConsoleSocialWork.BLL.services
                           userEntity.favorite_movie,
                           userEntity.favorite_book,
                           incomingMessages,
-                          outgoingMessages
+                          outgoingMessages,
+                          friendRepository
                           );
         }
     }

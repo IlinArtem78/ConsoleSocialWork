@@ -4,11 +4,13 @@ using ConsoleSocialWork.BLL.Models;
 using ConsoleSocialWork.BLL.services;
 using ConsoleSocialWork.PLL.Views;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 class Program
 {
     static MessageServices messageService;
     static UserServices userService;
+    public static AddFriendsView AddFriendsView;    
     public static MainView mainView;
     public static RegistrationView registrationView;
     public static AuthenticationView authenticationView;
@@ -30,6 +32,7 @@ class Program
         userMenuView = new UserMenuView(userService);
         userInfoView = new UserInfoView();
         userDataUpdateView = new UserDataUpdateView(userService);
+        AddFriendsView = new AddFriendsView(userService);
         messageSendingView = new MessageSendingView(messageService, userService);
         userIncomingMessageView = new UserIncomingMessageView();
         userOutcomingMessageView = new UserOutcomingMessageView();

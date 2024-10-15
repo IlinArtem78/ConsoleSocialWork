@@ -18,7 +18,7 @@ namespace ConsoleSocialWork.BLL.Models
         public string FavoriteBook { get; set; }
         public IEnumerable<Messages> IncomingMessages { get; }
         public IEnumerable<Messages> OutgoingMessages { get; }
-        public IEnumerable<Friends> friends { get; }
+        public IEnumerable<User> friends { get; }
 
         public User(
             int id,
@@ -30,7 +30,8 @@ namespace ConsoleSocialWork.BLL.Models
             string favoriteMovie,
             string favoriteBook, 
             IEnumerable<Messages> incomingMessages,
-            IEnumerable<Messages> outgoingMessages)
+            IEnumerable<Messages> outgoingMessages,
+            IEnumerable<User> friends)
         {
             this.Id = id;
             this.FirstName = firstName;
@@ -42,6 +43,7 @@ namespace ConsoleSocialWork.BLL.Models
             this.FavoriteBook = favoriteBook;
             this.IncomingMessages = incomingMessages;
             this.OutgoingMessages = outgoingMessages;
+            this.friends = friends;
         }
     }
 }
